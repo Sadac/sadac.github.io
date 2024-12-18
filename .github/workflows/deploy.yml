@@ -18,14 +18,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8.15.4
       - name: Checkout your repository using git
         uses: actions/checkout@v4
       - name: Install, build, and upload your site
         uses: withastro/action@v3
+        with:
+          package-manager: pnpm@latest
         # with:
         # path: . # The root location of your Astro project inside the repository. (optional)
         # node-version: 20 # The specific version of Node that should be used to build your site. Defaults to 20. (optional)
