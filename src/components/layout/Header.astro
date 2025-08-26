@@ -1,6 +1,4 @@
 ---
-import homeLogo from '../../assets/old-computer.png';
-import { Image } from 'astro:assets'
 ---
 
 <header class='mb-12 flex w-full flex-wrap pb-3 text-sm sm:flex-nowrap sm:justify-start'>
@@ -9,18 +7,18 @@ import { Image } from 'astro:assets'
 		aria-label='global'
 	>
 		<a class='flex-none text-xl font-semibold' href='/' aria-label='Brand'>
-			<Image src={homeLogo} alt='Menu Icon' class='h-12 w-auto' />
+			Rocco Sada
 		</a>
 
 		<div class='flex flex-row items-center justify-center gap-x-5 sm:gap-x-7'>
 			<!-- TODO: Update blog and tools pages -->
-			<!-- <a
+			<a
 				href='/blog'
 				class='flex-none text-[1.05rem] font-medium hover:text-foreground/75'
 				aria-label='Nav Menu Item'
 				>Blog
 			</a>
-			<a
+			<!-- <a
 				href='/tools'
 				class='flex-none text-[1.05rem] font-medium hover:text-foreground/75'
 				aria-label='Nav Menu Item'

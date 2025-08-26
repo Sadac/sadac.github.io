@@ -5,13 +5,14 @@ import Card from '../components/Card.astro'
 import ProjectCard from '../components/ProjectCard.astro'
 import Label from '../components/Label.astro'
 import SkillLayout from '../components/SkillLayout.astro'
+import Button from '../components/Button.astro'
 import PostPreview from '@/components/blog/PostPreview.astro'
 
 import { Image } from 'astro:assets'
 import rocco from '../assets/rocco-sada.svg'
 
 
-import { getAllPosts, sortMDByDate } from '@/utils'
+import { getAllPosts, getUniqueTags, sortMDByDate } from '@/utils'
 
 const languages = ['Spanish (Native)', 'English (Professional Proficiency)']
 const frontend = ['React', 'Redux', 'CSS', 'Javascript', 'Tailwind']
@@ -21,36 +22,15 @@ const others = ['AWS', 'GCP', 'Docker', 'POO', 'SOLID', 'TDD', 'Git', 'CI/CD', '
 const MAX_POSTS = 10
 const allPosts = await getAllPosts()
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+const uniqueTags = getUniqueTags(allPosts)
 ---
 
 <PageLayout meta={{ title: 'Home' }}>
 	<div class='flex w-full flex-col gap-y-10'>
 		<section class='flex flex-col items-center gap-y-7'>
-			<!-- TODO: Update image -->
-			<!-- <Image
-				src={rocco}
-				alt='rocco-sada-logo'
-				class='h-28 w-auto p-2'
-				loading='eager'
-			/> -->
-
 			<div class='flex flex-col items-center gap-y-4'>
-				<h1 class='text-3xl font-bold'>Hola! 👋🏻 I'm Rocco! 😁</h1>
-				<!-- <a
-					href='https://github.com/srleom/astro-theme-resume.git'
-					class='flex flex-row items-center gap-x-3 rounded-3xl border border-input px-4 py-2 text-sm shadow-sm transition-all hover:shadow-md'
-				>
-					<span class='relative flex items-center justify-center'>
-						<span
-							class='absolute inline-flex h-2 w-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
-						></span>
-						<span class='relative inline-flex h-2 w-2 rounded-full bg-green-400'></span>
-					</span>
-
-					<p class='font-medium'>Get free template</p>
-				</a> -->
 				<div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
-					<Label title='Javascript Developer'>
+					<Label title='Software Engineer'>
 						<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' class='h-5 w-5' slot='icon'
 							><path
 								fill='currentColor'
@@ -87,110 +67,66 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 			</div>
 		</section>
 
-		<Section title='About'>
-			<p class='text-muted-foreground'>
-				Hi there! My name is Rocco Sada, and I'm a Javascript developer! 🚀
-			</p>
-			<p class='text-muted-foreground'>
-				Over the years, I've been developing my skills to create efficient, scalable, and impactful software solutions. I <s>know</s> hope there is still a long way to go! 🤓
-			</p>
-			<p class='text-muted-foreground'>
-				Whether it's through my coding with coworkers, or my videos on my YouTube channel <a class="text-red-500 font-bold" href="https://www.youtube.com/@medievalscript" target="_blank">@medievalscript</a>, I love learning & sharing programming knowledge, tips, and insights with others.
-			</p>
+		<!-- Latest Posts Section -->
+		<section class='w-full'>
+			<h2 class='mb-6 text-2xl font-bold'>Latest Posts</h2>
 
-			<p class='text-muted-foreground'>
-				When I’m not coding, you’ll likely find me playing guitar, saxophone, or flute 🎸🎷🪈, spending quality time with my family, exploring the latest programming trends, or tackling exciting challenges.
-				<strong><i>Let’s collaborate and create something amazing together!</i></strong>
-			</p>
+			{allPostsByDate.length > 0 ? (
+				<div class='grid gap-y-16 sm:grid-cols-[3fr_1fr] sm:gap-x-8'>
+					<section aria-label='Latest posts list'>
+						<div class='flex flex-col gap-y-3'>
+							{allPostsByDate.map((post) => (
+								<Card
+									as='a'
+									heading={post.data.title}
+									subheading={post.data.description}
+									date={post.data.publishDate.toLocaleDateString()}
+									href={`/blog/${post.slug}`}
+								/>
+							))}
+						</div>
+					</section>
 
-		</Section>
-
-		<!-- Update posts -->
-		<!-- {
-			allPostsByDate.length > 0 && (
-				<Section title='Posts'>
-					<ul class='flex flex-col gap-y-2'>
-						{allPostsByDate.map((p) => (
-							<li class='flex flex-col gap-x-2 sm:flex-row'>
-								<PostPreview post={p} />
-							</li>
-						))}
-					</ul>
-				</Section>
-			)
-		} -->
-
-		<Section title="Experience">
-			<Card
-			  heading="Backend Developer"
-			  subheading="Improving (formerly Leniolabs_)"
-			  date="Jan 2022 - Present"
-			  imagePath="/src/assets/coffee.png"
-			  altText="Backend Development"
-			  imageClass="h-12 w-auto md:-left-16"
-			>
-			  <ul class="ml-4 list-disc text-muted-foreground">
-				<li>
-				  Diligent (Jun 2022 - Present): Developed and maintained endpoints and web components using Node.js and React. Contributed to an SRE dashboard by implementing health check scripts and alarms in AWS CloudWatch.
-				</li>
-				<li>
-				  Taxfix (Jan 2022 - Jun 2022): Designed a REST API with NestJS, implemented an adapter pattern for API integration, and built frontend features with React to help Spanish citizens file tax returns.
-				</li>
-			  </ul>
-			</Card>
-		  
-			<Card
-			  heading="Backend Developer"
-			  subheading="Cognizant Softvision"
-			  date="Sep 2019 - Dec 2021"
-			  imagePath="/src/assets/coffee.png"
-			  altText="Backend Development"
-			  imageClass="h-12 w-auto md:-left-16"
-			>
-			  <ul class="ml-4 list-disc text-muted-foreground">
-				<li>
-				  GSK (Jul 2020 - Dec 2021): Migrated a REST API from PHP to Node.js and Express, leveraging GCP and PostgreSQL for scalability and performance.
-				</li>
-				<li>
-				  Game of Pods (Sep 2019 - Jul 2020): Developed a gamification platform for employee engagement, building endpoints and managing a key microservice.
-				</li>
-			  </ul>
-			</Card>
-		  
-			<Card
-			  heading="Fullstack Javascript Developer"
-			  subheading="Educ.ar Sociedad del Estado"
-			  date="Nov 2018 - Sep 2019"
-				imagePath="/src/assets/coffee.png"
-			  altText="Fullstack Development"
-			  imageClass="h-12 w-auto md:-left-16"
-			>
-			  <ul class="ml-4 list-disc text-muted-foreground">
-				<li>
-				  Created an application to track attendance for students and teachers in state institutions.
-				</li>
-				<li>
-				  Designed and implemented the new version of the API using Node.js and Express.
-				</li>
-			  </ul>
-			</Card>
-		  </Section>
-		  
-		  <Section title="Education">
-			<Card
-			  heading="Bachelor's Degree - Computer Engineering"
-			  subheading="Universidad Fermín Toro"
-			  date="2016 - 2024"
-			  imagePath="/src/assets/coffee.png"
-			  altText="Computer Engineering"
-			  imageClass="h-12 w-auto md:-left-16"
-			>
-			  <p>
-				Currently working on my thesis project - <i>Using Artificial Intelligence in Spaced Repetition Learning.</i>
-			  </p>
-			</Card>
-		  </Section>
-		  
+					{!!uniqueTags.length && (
+						<aside>
+							<h3 class='mb-4 flex items-center text-lg font-semibold'>
+								<svg
+									aria-hidden='true'
+									class='h-6 w-6'
+									fill='none'
+									stroke='currentColor'
+									stroke-linecap='round'
+									stroke-linejoin='round'
+									stroke-width='1.5'
+									viewBox='0 0 24 24'
+									xmlns='http://www.w3.org/2000/svg'
+								>
+									<path d='M0 0h24v24H0z' fill='none' stroke='none' />
+									<path d='M7.859 6h-2.834a2.025 2.025 0 0 0 -2.025 2.025v2.834c0 .537 .213 1.052 .593 1.432l6.116 6.116a2.025 2.025 0 0 0 2.864 0l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-6.117 -6.116a2.025 2.025 0 0 0 -1.431 -.593z' />
+									<path d='M17.573 18.407l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-7.117 -7.116' />
+									<path d='M6 9h-.01' />
+								</svg>
+								Tags
+							</h3>
+							<ul class='text-bgColor flex flex-wrap gap-2'>
+								{uniqueTags.map((tag) => (
+									<li>
+										<Button title={tag} href={`/tags/${tag}/`} style='pill' />
+									</li>
+								))}
+							</ul>
+							<span class='mt-4 block sm:text-end'>
+								<a aria-label='View all blog categories' class='' href='/tags/' data-astro-prefetch>
+									View all →
+								</a>
+							</span>
+						</aside>
+					)}
+				</div>
+			) : (
+				<p>No posts yet.</p>
+			)}
+		</section>
 
 		<!-- <Section title='Projects'>
 			<div class='flex flex-col gap-y-3 sm:flex-row sm:gap-x-3 sm:gap-y-0'>
@@ -235,13 +171,6 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
 				href='https://www.google.com'
 			/>
 		</Section> -->
-
-		<Section title='Skills'>
-			<SkillLayout title='Languages' skills={languages} />
-			<SkillLayout title='Frontend' skills={frontend} />
-			<SkillLayout title='Backend' skills={backend} />
-			<SkillLayout title='Others' skills={others} />
-		</Section>
 	</div>
 	<!-- <a
 		href='https://github.com/srleom/astro-theme-resume.git'
