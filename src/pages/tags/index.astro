@@ -6,9 +6,13 @@ import { getAllPosts, getUniqueTagsWithCount } from '@/utils'
 const allPosts = await getAllPosts()
 const allTags = getUniqueTagsWithCount(allPosts)
 
+// Filter out draft posts for accurate tag counts
+const publishedPosts = allPosts.filter((post) => post.data.draft !== true)
+const publishedTags = getUniqueTagsWithCount(publishedPosts)
+
 const meta = {
-	description: "A list of all the topics I've written about in my posts",
-	title: 'All Tags'
+	description: "Explore all the topics and categories I've written about in my blog posts",
+	title: 'All Tags & Topics'
 }
 ---
 
@@ -30,31 +34,59 @@ const meta = {
 			</svg>
 		</Button>
 
-		<h1 class='mb-6 mt-5 text-2xl font-bold'>Tags</h1>
-		{allTags.length === 0 && <p>No posts yet.</p>}
+		<h1 class='mb-6 mt-5 text-2xl font-bold'>All Tags</h1>
 
-		{
-			allTags.length > 0 && (
-				<ul class='flex flex-col gap-y-3'>
-					{allTags.map(([tag, val]) => (
-						<li class='flex items-center gap-x-2 '>
-							<a
-								class='inline-block underline underline-offset-4 hover:text-foreground/75'
-								data-astro-prefetch
-								href={`/tags/${tag}/`}
-								title={`View posts with the tag: ${tag}`}
-							>
-								&#35;{tag}
-							</a>
-							<span class='inline-block'>
-								- {val} post{val > 1 && 's'}
+		{/* Tags Section */}
+		{publishedTags.length === 0 ? (
+			<div class='text-center py-12'>
+				<p class='text-muted-foreground'>No posts yet.</p>
+			</div>
+		) : (
+			<section>
+
+				{/* Tags Grid */}
+				<div class='flex flex-wrap gap-3'>
+					{publishedTags.map(([tag, count]) => (
+						<Button
+							title={`${tag} (${count} post${count > 1 ? 's' : ''})`}
+							href={`/tags/${tag}/`}
+							style='pill'
+							data-astro-prefetch
+						>
+							<span class='flex items-center gap-2'>
+								<span>#{tag}</span>
+								<span class='text-xs opacity-75'>({count})</span>
 							</span>
-						</li>
+						</Button>
 					))}
-				</ul>
-			)
-		}
+				</div>
 
-
+				{/* Most Popular Tags */}
+				{publishedTags.length > 5 && (
+					<div class='mt-8'>
+						<h3 class='mb-4 text-lg font-medium'>Most Popular</h3>
+						<div class='flex flex-wrap gap-2'>
+							{publishedTags
+								.sort(([,a], [,b]) => b - a)
+								.slice(0, 5)
+								.map(([tag, count]) => (
+									<Button
+										title={`${tag} (${count} post${count > 1 ? 's' : ''})`}
+										href={`/tags/${tag}/`}
+										style='pill'
+										data-astro-prefetch
+									>
+										<span class='flex items-center gap-2'>
+											<span>#{tag}</span>
+											<span class='text-xs opacity-75 font-bold'>{count}</span>
+										</span>
+									</Button>
+								))
+							}
+						</div>
+					</div>
+				)}
+			</section>
+		)}
 	</div>
 </PageLayout>

@@ -1,10 +1,10 @@
 <script is:inline>
 	const lightModePref = window.matchMedia('(prefers-color-scheme: light)')
 
-	// Get user preference from local storage or from browser preference
+	// Get user preference from local storage or default to dark theme
 	function getUserPref() {
 		const storedTheme = localStorage.getItem('theme') ?? undefined
-		return storedTheme || (lightModePref.matches ? 'light' : 'dark')
+		return storedTheme || 'dark'
 	}
 
 	function setTheme(newTheme) {
