@@ -13,10 +13,13 @@ import { getAllPosts, getUniqueTags, sortMDByDate } from '@/utils'
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
 	const allPosts = await getAllPosts()
 	const allPostsByDate = sortMDByDate(allPosts)
-	const uniqueTags = getUniqueTags(allPostsByDate)
+
+	// Filter out draft posts to ensure their tags don't appear
+	const publishedPosts = allPostsByDate.filter((post) => post.data.draft !== true)
+	const uniqueTags = getUniqueTags(publishedPosts)
 
 	return uniqueTags.flatMap((tag) => {
-		const filterPosts = allPostsByDate.filter((post) => post.data.tags.includes(tag))
+		const filterPosts = publishedPosts.filter((post) => post.data.tags.includes(tag))
 		return paginate(filterPosts, {
 			pageSize: 10,
 			params: { tag }
