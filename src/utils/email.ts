@@ -9,7 +9,7 @@ interface EmailData {
 export async function sendContactEmail(data: EmailData): Promise<boolean> {
 	try {
 		// Create SMTP transporter using AWS SES SMTP
-		const transporter = nodemailer.createTransporter({
+		const transporter = nodemailer.createTransport({
 			host: import.meta.env.AWS_SES_SMTP_HOST,
 			port: parseInt(import.meta.env.AWS_SES_SMTP_PORT || '587'),
 			secure: false, // true for 465, false for other ports
