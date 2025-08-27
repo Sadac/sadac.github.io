@@ -2,6 +2,7 @@
 import { z } from 'astro:content'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import Button from '@/components/Button.astro'
+import { sendContactEmail } from '@/utils'
 
 const meta = {
 	title: 'Contact Me',
@@ -38,10 +39,17 @@ if (Astro.request.method === 'POST') {
 				return acc
 			}, {} as Record<string, string>)
 		} else {
-			// Form is valid - here you would typically send email or save to database
+			// Form is valid - send email via AWS SES
 			console.log('Valid form submission:', result.data)
-			successMessage = 'Thank you for your message! I\'ll get back to you soon.'
-			formData = { name: '', email: '', message: '' } // Reset form
+			
+			const emailSent = await sendContactEmail(result.data)
+			
+			if (emailSent) {
+				successMessage = 'Thank you for your message! I\'ll get back to you soon.'
+				formData = { name: '', email: '', message: '' } // Reset form
+			} else {
+				errors.general = 'There was an error sending your message. Please try again or contact me directly.'
+			}
 		}
 	} catch (error) {
 		console.error('Form processing error:', error)
