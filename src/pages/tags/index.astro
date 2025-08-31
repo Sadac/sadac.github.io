@@ -4,7 +4,6 @@ import PageLayout from '@/layouts/BaseLayout.astro'
 import { getAllPosts, getUniqueTagsWithCount } from '@/utils'
 
 const allPosts = await getAllPosts()
-const allTags = getUniqueTagsWithCount(allPosts)
 
 // Filter out draft posts for accurate tag counts
 const publishedPosts = allPosts.filter((post) => post.data.draft !== true)
